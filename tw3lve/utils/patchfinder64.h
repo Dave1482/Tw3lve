@@ -1,0 +1,22 @@
+int InitPatchfinder(uint64_t base, const char *filename);
+void TermPatchfinder(void);
+
+// Fun part
+uint64_t find_allproc(void);
+uint64_t find_add_x0_x0_0x40_ret(void);
+uint64_t find_copyout(void);
+uint64_t find_bzero(void);
+uint64_t find_bcopy(void);
+uint64_t find_rootvnode(void);
+uint64_t find_trustcache(void);
+uint64_t find_amficache(void);
+uint64_t find_OSBoolean_True(void);
+uint64_t find_OSBoolean_False(void);
+uint64_t find_zone_map_ref(void);
+uint64_t find_osunserializexml(void);
+uint64_t find_smalloc(void);
+uint64_t find_sbops(void);
+uint64_t find_bootargs(void);
+uint64_t find_vfs_context_current(void);
+uint64_t find_vnode_lookup(void);
+uint64_t find_vnode_put(void);

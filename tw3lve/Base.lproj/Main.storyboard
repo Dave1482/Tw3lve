@@ -4,7 +4,6 @@
         <adaptation id="fullscreen"/>
     </device>
     <dependencies>
-        <deployment identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14460.20"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
@@ -26,11 +25,22 @@
                                     <action selector="jelbrekClik:" destination="BYZ-38-t0r" eventType="touchUpInside" id="kpN-UZ-vkh"/>
                                 </connections>
                             </button>
+                            <button opaque="NO" contentMode="scaleToFill" misplaced="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="MEU-rv-rjZ">
+                                <rect key="frame" x="66" y="362" width="242" height="51"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="32"/>
+                                <state key="normal" title="r/jelbrek (v_swap)"/>
+                                <connections>
+                                    <action selector="jelbrekA12Clik:" destination="BYZ-38-t0r" eventType="touchUpInside" id="NNa-mf-xGs"/>
+                                </connections>
+                            </button>
                         </subviews>
                         <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <constraints>
-                            <constraint firstItem="QYw-lZ-2rw" firstAttribute="top" secondItem="6Tk-OE-BBY" secondAttribute="top" constant="238" id="8B2-vG-TlF"/>
-                            <constraint firstItem="QYw-lZ-2rw" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="KFN-Px-rvf"/>
+                            <constraint firstItem="MEU-rv-rjZ" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" constant="66" id="0fY-7D-bgi"/>
+                            <constraint firstItem="MEU-rv-rjZ" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="2e2-6V-uy4"/>
+                            <constraint firstItem="QYw-lZ-2rw" firstAttribute="top" secondItem="6Tk-OE-BBY" secondAttribute="top" constant="238" id="FKr-9A-Dsx"/>
+                            <constraint firstItem="MEU-rv-rjZ" firstAttribute="top" secondItem="QYw-lZ-2rw" secondAttribute="bottom" constant="40" id="He5-hN-vMb"/>
+                            <constraint firstItem="QYw-lZ-2rw" firstAttribute="centerX" secondItem="MEU-rv-rjZ" secondAttribute="centerX" id="hoQ-hM-T1y"/>
                         </constraints>
                         <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
                     </view>

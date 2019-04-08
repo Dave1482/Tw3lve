@@ -7,8 +7,14 @@
 //
 
 #import <Foundation/Foundation.h>
+#import <sys/event.h>
 #import "kernel_utils.h"
 #import "offsetof.h"
+
+
+#include "OffsetHolder.h"
+#include "find_port.h"
+#include "machswap.h"
 
 
 BOOL PatchHostPriv(mach_port_t host) {
@@ -31,18 +37,12 @@ BOOL PatchHostPriv(mach_port_t host) {
     return ((IO_ACTIVE | IKOT_HOST_PRIV) == new) ? YES : NO;
 }
 
-uint64_t unsandbox(pid_t pid) {
-    if (!pid) return NO;
-    
-    printf("[*] Unsandboxing pid %d\n", pid);
-    
-    uint64_t proc = proc_of_pid(pid); // pid's proccess structure on the kernel
-    uint64_t ucred = KernelRead_64bits(proc + off_p_ucred); // pid credentials
-    uint64_t cr_label = KernelRead_64bits(ucred + off_ucred_cr_label); // MAC label
-    uint64_t orig_sb = KernelRead_64bits(cr_label + off_sandbox_slot);
-    
-    KernelWrite_64bits(cr_label + off_sandbox_slot /* First slot is AMFI's. so, this is second? */, 0); //get rid of sandbox by nullifying it
-    
-    return (KernelRead_64bits(KernelRead_64bits(ucred + off_ucred_cr_label) + off_sandbox_slot) == 0) ? orig_sb : NO;
+
+
+
+uint64_t task_self_addr()
+{
+    return find_port_address(mach_task_self(), MACH_MSG_TYPE_COPY_SEND);
 }
+
 

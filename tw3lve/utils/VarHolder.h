@@ -14,5 +14,10 @@
 extern mach_port_t tfp0;
 extern uint64_t kslide;
 extern uint64_t kbase;
+extern uint64_t cr_label;
+extern uint64_t ourproc;
+
+void setCR(uint64_t set);
+void setOURPROC(uint64_t set);
 
 #endif /* VarHolder_h */

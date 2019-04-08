@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		B86C1E18225AE0BA0066A157 /* voucher_swap.c in Sources */ = {isa = PBXBuildFile; fileRef = B86C1E16225AE0BA0066A157 /* voucher_swap.c */; };
+		B86C1E1D225AE0FB0066A157 /* kernel_alloc.c in Sources */ = {isa = PBXBuildFile; fileRef = B86C1E1B225AE0FB0066A157 /* kernel_alloc.c */; };
 		B8A00F46225A7B55002A6ABF /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = B8A00F45225A7B55002A6ABF /* AppDelegate.m */; };
 		B8A00F49225A7B55002A6ABF /* Tw3lveView.m in Sources */ = {isa = PBXBuildFile; fileRef = B8A00F48225A7B55002A6ABF /* Tw3lveView.m */; };
 		B8A00F4C225A7B55002A6ABF /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B8A00F4A225A7B55002A6ABF /* Main.storyboard */; };
@@ -32,9 +34,17 @@
 		B8A00F97225AAB98002A6ABF /* kexecute.c in Sources */ = {isa = PBXBuildFile; fileRef = B8A00F95225AAB98002A6ABF /* kexecute.c */; };
 		B8A00F9E225AAC57002A6ABF /* patchfinder64.c in Sources */ = {isa = PBXBuildFile; fileRef = B8A00F9C225AAC57002A6ABF /* patchfinder64.c */; };
 		B8A00FA0225AACA9002A6ABF /* utils.m in Sources */ = {isa = PBXBuildFile; fileRef = B8A00F9F225AACA9002A6ABF /* utils.m */; };
+		B8A00FAA225ACEE9002A6ABF /* find_port.c in Sources */ = {isa = PBXBuildFile; fileRef = B8A00FA8225ACEE9002A6ABF /* find_port.c */; };
+		B8A00FAD225AD5F8002A6ABF /* machswap2.m in Sources */ = {isa = PBXBuildFile; fileRef = B8A00FAC225AD5F8002A6ABF /* machswap2.m */; };
+		B8A00FB0225AD967002A6ABF /* remap_tfp_set_hsp.c in Sources */ = {isa = PBXBuildFile; fileRef = B8A00FAE225AD967002A6ABF /* remap_tfp_set_hsp.c */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		B86C1E16225AE0BA0066A157 /* voucher_swap.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = voucher_swap.c; sourceTree = "<group>"; };
+		B86C1E17225AE0BA0066A157 /* voucher_swap.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = voucher_swap.h; sourceTree = "<group>"; };
+		B86C1E1A225AE0DD0066A157 /* ipc_port.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ipc_port.h; sourceTree = "<group>"; };
+		B86C1E1B225AE0FB0066A157 /* kernel_alloc.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = kernel_alloc.c; sourceTree = "<group>"; };
+		B86C1E1C225AE0FB0066A157 /* kernel_alloc.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = kernel_alloc.h; sourceTree = "<group>"; };
 		B8A00F41225A7B55002A6ABF /* tw3lve.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = tw3lve.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		B8A00F44225A7B55002A6ABF /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		B8A00F45225A7B55002A6ABF /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
@@ -91,6 +101,12 @@
 		B8A00F9D225AAC57002A6ABF /* patchfinder64.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = patchfinder64.h; sourceTree = "<group>"; };
 		B8A00F9F225AACA9002A6ABF /* utils.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = utils.m; sourceTree = "<group>"; };
 		B8A00FA2225AACC9002A6ABF /* utils.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = utils.h; sourceTree = "<group>"; };
+		B8A00FA8225ACEE9002A6ABF /* find_port.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = find_port.c; sourceTree = "<group>"; };
+		B8A00FA9225ACEE9002A6ABF /* find_port.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = find_port.h; sourceTree = "<group>"; };
+		B8A00FAB225AD5E7002A6ABF /* machswap2.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = machswap2.h; sourceTree = "<group>"; };
+		B8A00FAC225AD5F8002A6ABF /* machswap2.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = machswap2.m; sourceTree = "<group>"; };
+		B8A00FAE225AD967002A6ABF /* remap_tfp_set_hsp.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = remap_tfp_set_hsp.c; sourceTree = "<group>"; };
+		B8A00FAF225AD967002A6ABF /* remap_tfp_set_hsp.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = remap_tfp_set_hsp.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -146,6 +162,10 @@
 				B8A00F61225A7CD1002A6ABF /* machswap.h */,
 				B8A00F62225A7CF5002A6ABF /* ms_offsets.h */,
 				B8A00F63225A7D09002A6ABF /* ms_offsets.m */,
+				B8A00FAB225AD5E7002A6ABF /* machswap2.h */,
+				B8A00FAC225AD5F8002A6ABF /* machswap2.m */,
+				B86C1E16225AE0BA0066A157 /* voucher_swap.c */,
+				B86C1E17225AE0BA0066A157 /* voucher_swap.h */,
 			);
 			path = exploits;
 			sourceTree = "<group>";
@@ -161,6 +181,7 @@
 				B8A00F99225AABD2002A6ABF /* IOReturn.h */,
 				B8A00F9A225AABE2002A6ABF /* IOKitKeys.h */,
 				B8A00F9B225AABF7002A6ABF /* OSMessageNotification.h */,
+				B86C1E1A225AE0DD0066A157 /* ipc_port.h */,
 			);
 			path = include;
 			sourceTree = "<group>";
@@ -168,6 +189,7 @@
 		B8A00F65225A7F7D002A6ABF /* utils */ = {
 			isa = PBXGroup;
 			children = (
+				B8A00FA7225ACEDC002A6ABF /* PORT */,
 				B8A00F69225AA907002A6ABF /* kernel_call */,
 				B8A00F66225A7F8A002A6ABF /* VarHolder.c */,
 				B8A00F67225A7F8A002A6ABF /* VarHolder.h */,
@@ -210,8 +232,21 @@
 				B8A00F8D225AAAFC002A6ABF /* platform_match.h */,
 				B8A00F8F225AAB34002A6ABF /* offsetof.c */,
 				B8A00F90225AAB34002A6ABF /* offsetof.h */,
+				B86C1E1B225AE0FB0066A157 /* kernel_alloc.c */,
+				B86C1E1C225AE0FB0066A157 /* kernel_alloc.h */,
 			);
 			path = kernel_call;
+			sourceTree = "<group>";
+		};
+		B8A00FA7225ACEDC002A6ABF /* PORT */ = {
+			isa = PBXGroup;
+			children = (
+				B8A00FA8225ACEE9002A6ABF /* find_port.c */,
+				B8A00FA9225ACEE9002A6ABF /* find_port.h */,
+				B8A00FAE225AD967002A6ABF /* remap_tfp_set_hsp.c */,
+				B8A00FAF225AD967002A6ABF /* remap_tfp_set_hsp.h */,
+			);
+			path = PORT;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -295,13 +330,18 @@
 				B8A00F94225AAB62002A6ABF /* OffsetHolder.m in Sources */,
 				B8A00F87225AAA8D002A6ABF /* kernel_slide.c in Sources */,
 				B8A00F81225AAA1E002A6ABF /* parameters.c in Sources */,
+				B8A00FAA225ACEE9002A6ABF /* find_port.c in Sources */,
+				B8A00FAD225AD5F8002A6ABF /* machswap2.m in Sources */,
 				B8A00F84225AAA74002A6ABF /* kernel_memory.c in Sources */,
 				B8A00F71225AA91A002A6ABF /* kernel_call.c in Sources */,
+				B86C1E1D225AE0FB0066A157 /* kernel_alloc.c in Sources */,
 				B8A00FA0225AACA9002A6ABF /* utils.m in Sources */,
 				B8A00F5C225A7C4F002A6ABF /* machswap.m in Sources */,
 				B8A00F68225A7F8A002A6ABF /* VarHolder.c in Sources */,
 				B8A00F72225AA91A002A6ABF /* kernel_utils.m in Sources */,
+				B8A00FB0225AD967002A6ABF /* remap_tfp_set_hsp.c in Sources */,
 				B8A00F9E225AAC57002A6ABF /* patchfinder64.c in Sources */,
+				B86C1E18225AE0BA0066A157 /* voucher_swap.c in Sources */,
 				B8A00F70225AA91A002A6ABF /* log.c in Sources */,
 				B8A00F79225AA947002A6ABF /* kc_parameters.c in Sources */,
 				B8A00F54225A7B56002A6ABF /* main.m in Sources */,

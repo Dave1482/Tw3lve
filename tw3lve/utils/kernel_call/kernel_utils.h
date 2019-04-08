@@ -8,17 +8,47 @@
 #import <sys/stat.h>
 
 // Needed definitions
-kern_return_t mach_vm_allocate(vm_map_t target, mach_vm_address_t *address, mach_vm_size_t size, int flags);
-kern_return_t mach_vm_read_overwrite(vm_map_t target_task, mach_vm_address_t address, mach_vm_size_t size, mach_vm_address_t data, mach_vm_size_t *outsize);
-kern_return_t mach_vm_write(vm_map_t target_task, mach_vm_address_t address, vm_offset_t data, mach_msg_type_number_t dataCnt);
-kern_return_t mach_vm_deallocate(vm_map_t target, mach_vm_address_t address, mach_vm_size_t size);
-kern_return_t mach_vm_protect (vm_map_t target_task, mach_vm_address_t address,  mach_vm_size_t size, boolean_t set_maximum, vm_prot_t new_protection);
-kern_return_t mach_vm_read(vm_map_t target_task, mach_vm_address_t address, mach_vm_size_t size, vm_offset_t *data, mach_msg_type_number_t *dataCnt);
-kern_return_t mach_vm_region(vm_map_t target_task, mach_vm_address_t *address, mach_vm_size_t *size, vm_region_flavor_t flavor, vm_region_info_t info, mach_msg_type_number_t *infoCnt, mach_port_t *object_name);
+kern_return_t mach_vm_read(
+                           vm_map_t target_task,
+                           mach_vm_address_t address,
+                           mach_vm_size_t size,
+                           vm_offset_t* data,
+                           mach_msg_type_number_t* dataCnt);
+
+kern_return_t mach_vm_write(
+                            vm_map_t target_task,
+                            mach_vm_address_t address,
+                            vm_offset_t data,
+                            mach_msg_type_number_t dataCnt);
+
+kern_return_t mach_vm_read_overwrite(
+                                     vm_map_t target_task,
+                                     mach_vm_address_t address,
+                                     mach_vm_size_t size,
+                                     mach_vm_address_t data,
+                                     mach_vm_size_t* outsize);
+
+kern_return_t mach_vm_allocate(
+                               vm_map_t target,
+                               mach_vm_address_t* address,
+                               mach_vm_size_t size,
+                               int flags);
+
+kern_return_t mach_vm_deallocate(
+                                 vm_map_t target,
+                                 mach_vm_address_t address,
+                                 mach_vm_size_t size);
+
+kern_return_t mach_vm_protect(
+                              vm_map_t target_task,
+                              mach_vm_address_t address,
+                              mach_vm_size_t size,
+                              boolean_t set_maximum,
+                              vm_prot_t new_protection);
 
 
 // init function
-void init_kernel_utils(mach_port_t tfp0);
+void setOwO(mach_port_t OwO2Set);
 
 // utils
 uint64_t TaskSelfAddr(void);
@@ -32,7 +62,7 @@ void MakePortFakeTaskPort(mach_port_t port, uint64_t task_kaddr);
 size_t KernelRead(uint64_t where, void *p, size_t size);
 uint32_t KernelRead_32bits(uint64_t where);
 uint64_t KernelRead_64bits(uint64_t where);
-size_t KernelWrite(uint64_t where, const void *p, size_t size);
+boolean_t KernelWrite(uint64_t where, const void *p, size_t size);
 void KernelWrite_32bits(uint64_t where, uint32_t what);
 void KernelWrite_64bits(uint64_t where, uint64_t what);
 void Kernel_memcpy(uint64_t dest, uint64_t src, uint32_t length);
@@ -43,6 +73,9 @@ int Kernel_strcmp(uint64_t kstr, const char* str);
 
 // for messing with processes
 uint64_t proc_of_pid(pid_t pid);
+
+uint64_t get_kernel_addr(void);
+
 uint64_t proc_of_procName(char *nm);
 unsigned int pid_of_procName(char *nm);
 uint64_t taskStruct_of_pid(pid_t pid);

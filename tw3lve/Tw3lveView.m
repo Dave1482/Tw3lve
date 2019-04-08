@@ -20,6 +20,8 @@
 #include "remap_tfp_set_hsp.h"
 
 #include "voucher_swap.h"
+#include "kernel_slide.h"
+#include "kernel_memory.h"
 
 #define KERNEL_SEARCH_ADDRESS 0xfffffff007004000
 //ff8ffc000
@@ -96,6 +98,9 @@ void jelbrek()
         if (voucher_swap_exp)
         {
             voucher_swap();
+            tfp0 = kernel_task_port;
+            kernel_slide_init();
+            kslide = kbase - KERNEL_SEARCH_ADDRESS;
         } else {
             ms_offsets_t *ms_offs = get_machswap_offsets();
             machswap_exploit(ms_offs, &tfp0, &kbase);

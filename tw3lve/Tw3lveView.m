@@ -102,12 +102,7 @@ void jelbrek()
             kslide = kbase - KERNEL_SEARCH_ADDRESS;
         }
         
-        
-        if (!MACH_PORT_VALID(tfp0))
-        {
-            NSLog(@"Exploit Failed!");
-            break;
-        }
+
         
         runOnMainQueueWithoutDeadlocking(^{
             NSLog(@"%@", [NSString stringWithFormat:@"TFP0: %x", tfp0]);

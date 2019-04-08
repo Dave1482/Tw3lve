@@ -103,7 +103,7 @@ void jelbrek()
         }
         
         
-        if (!MACH_PORT_VALID(tfp0) || tfp0 == 0 || kbase == 0)
+        if (!MACH_PORT_VALID(tfp0))
         {
             NSLog(@"Exploit Failed!");
             break;

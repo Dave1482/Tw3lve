@@ -36,12 +36,6 @@
 
 
 
-uint32_t proc_ucred;
-uint64_t kern_ucred;
-
-
-
-
 Tw3lveView *sharedController = nil;
 
 - (void)viewDidLoad {
@@ -101,10 +95,12 @@ void jelbrek()
             tfp0 = kernel_task_port;
             kernel_slide_init();
             kslide = kbase - KERNEL_SEARCH_ADDRESS;
+            
         } else {
             ms_offsets_t *ms_offs = get_machswap_offsets();
             machswap_exploit(ms_offs, &tfp0, &kbase);
             kslide = kbase - KERNEL_SEARCH_ADDRESS;
+            
         }
         
 
@@ -118,12 +114,12 @@ void jelbrek()
         
         //Unsandbox
         setOwO(tfp0);
-        KernelWrite_64bits(cr_label + 0x10, 0);
+        NSLog(@"Unsandbox Shiz");
+        KernelWrite_64bits(cr_label2 + 0x10, 0);
         
         //SetUID shitz
-        kern_ucred = get_kernel_addr();
-        
-        KernelWrite_64bits(ourproc + 0xf8, kern_ucred);
+        NSLog(@"SetUID Shiz");
+        KernelWrite_64bits(owoproc + 0xf8, newUcred);
         
         
         

@@ -2,8 +2,8 @@
 iOS 12-12.1.2 Jailbreak (WORK IN PROGRESS DO NOT USE)
 
 
-##DONE:
-[-] Root     
+## DONE:     
+[-] Root      
 [-] Sandbox Escape    
 [-] TFP0      
 
@@ -12,5 +12,4 @@ iOS 12-12.1.2 Jailbreak (WORK IN PROGRESS DO NOT USE)
 [-] Install Bootstrap   
 [-] Fix Bugs (Performance)    
 
-# NOTE:
-[~] Remove jelbrekLib we just need kernel_call. I think this is what we are doing right now, actually... WHO DID THIS? Me.    
+

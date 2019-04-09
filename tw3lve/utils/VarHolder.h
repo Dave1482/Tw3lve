@@ -12,15 +12,8 @@
 #include <stdio.h>
 
 extern mach_port_t tfp0;
-extern uint64_t kslide;
 extern uint64_t kbase;
-extern uint64_t cr_label2;
-
-extern uint64_t owoproc;
-extern uint64_t newUcred;
-
-void setCR(uint64_t set);
-void setOwOProc(uint64_t set);
-void setUcred(uint64_t set);
+extern uint64_t ourprocowo;
+extern uint64_t current_task2;
 
 #endif /* VarHolder_h */

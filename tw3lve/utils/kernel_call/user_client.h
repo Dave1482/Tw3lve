@@ -72,22 +72,4 @@ bool stage3_kernel_call_init(void);
  */
 void stage3_kernel_call_deinit(void);
 
-/*
- * assume_kernel_credentials
- *
- * Description:
- *   Set this process's credentials to the kernel's credentials so that we can bypass sandbox
- *   checks.
- */
-void assume_kernel_credentials(uint64_t *ucred_field, uint64_t *ucred);
-/*
- * restore_credentials
- *
- * Description:
- *   Restore this process's credentials after calling assume_kernel_credentials().
- */
-void restore_credentials(uint64_t ucred_field, uint64_t ucred);
-
-void unlocknvram(void);
-void locknvram(void);
 #endif

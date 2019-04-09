@@ -16,12 +16,12 @@
 #include "VarHolder.h"
 #include "patchfinder64.h"
 #include "utils.h"
-#include "kernel_utils.h"
-#include "remap_tfp_set_hsp.h"
 
 #include "voucher_swap.h"
 #include "kernel_slide.h"
 #include "kernel_memory.h"
+
+#include "offsets.h"
 
 #define KERNEL_SEARCH_ADDRESS 0xfffffff007004000
 //ff8ffc000
@@ -63,6 +63,35 @@ void runOnMainQueueWithoutDeadlocking(void (^block)(void))
 }
 
 
+
+
+
+
+static inline bool create_file_data(const char *file, int owner, mode_t mode, NSData *data) {
+    return [[NSFileManager defaultManager] createFileAtPath:@(file) contents:data attributes:@{
+                                                                                               NSFileOwnerAccountID: @(owner),
+                                                                                               NSFileGroupOwnerAccountID: @(owner),
+                                                                                               NSFilePosixPermissions: @(mode)
+                                                                                               }
+            ];
+}
+
+
+
+static inline bool create_file(const char *file, int owner, mode_t mode) {
+    return create_file_data(file, owner, mode, nil);
+}
+
+static inline bool clean_file(const char *file) {
+    NSString *path = @(file);
+    if ([[NSFileManager defaultManager] attributesOfItemAtPath:path error:nil]) {
+        return [[NSFileManager defaultManager] removeItemAtPath:path error:nil];
+    }
+    return YES;
+}
+
+
+
 /***********
  
     MAGIC
@@ -77,68 +106,46 @@ void jelbrek()
 {
     while (true)
     {
-        runOnMainQueueWithoutDeadlocking(^{
-            NSLog(@"Jailbreak Thread Started!");
-        });
+        //Init Offsets
+        offs_init();
+
+        NSLog(@"Jailbreak Thread Started!");
         
-        if ((kslide = kbase - KERNEL_SEARCH_ADDRESS) != -1) {
-            runOnMainQueueWithoutDeadlocking(^{
-                NSLog(@"%@", [NSString stringWithFormat:@"TFP0: %x", tfp0]);
-                NSLog(@"%@", [NSString stringWithFormat:@"KERNEL BASE: %llx", kbase]);
-                NSLog(@"%@", [NSString stringWithFormat:@"KERNEL SLIDE: %llx", kslide]);
-            });
-        }
         
+        //Init Exploit
         if (voucher_swap_exp)
         {
             voucher_swap();
             tfp0 = kernel_task_port;
             kernel_slide_init();
-            kslide = kbase - KERNEL_SEARCH_ADDRESS;
+            kbase = (kernel_slide + KERNEL_SEARCH_ADDRESS);
+            
+            //GET ROOT
+            rootMe(0, selfproc());
+            unsandbox(selfproc());
+            
             
         } else {
             ms_offsets_t *ms_offs = get_machswap_offsets();
             machswap_exploit(ms_offs, &tfp0, &kbase);
-            kslide = kbase - KERNEL_SEARCH_ADDRESS;
+            kernel_slide = (kbase - KERNEL_SEARCH_ADDRESS);
+            //Machswap and Machswap2 already gave us undandboxing and root. Thanks! <3
             
         }
         
 
+        //Log
+        NSLog(@"%@", [NSString stringWithFormat:@"TFP0: %x", tfp0]);
+        NSLog(@"%@", [NSString stringWithFormat:@"KERNEL BASE: %llx", kbase]);
+        NSLog(@"%@", [NSString stringWithFormat:@"KERNEL SLIDE: %llx", kernel_slide]);
         
-        runOnMainQueueWithoutDeadlocking(^{
-            NSLog(@"%@", [NSString stringWithFormat:@"TFP0: %x", tfp0]);
-            NSLog(@"%@", [NSString stringWithFormat:@"KERNEL BASE: %llx", kbase]);
-            NSLog(@"%@", [NSString stringWithFormat:@"KERNEL SLIDE: %llx", kslide]);
-        });
+        NSLog(@"UID: %u", getuid());
+        NSLog(@"GID: %u", getgid());
         
-        
-        //Unsandbox
-        setOwO(tfp0);
-        NSLog(@"Unsandbox Shiz");
-        KernelWrite_64bits(cr_label2 + 0x10, 0);
-        
-        //SetUID shitz
-        NSLog(@"SetUID Shiz");
-        KernelWrite_64bits(owoproc + 0xf8, newUcred);
-        
-        
-        
-        
-        
-        //I AM gROOT
-        if (getuid() == 0 && getgid() == 0)
-        {
-            NSLog(@"I AM G(ROOT)!");
-        } else {
-            NSLog(@"REBOOT ME OH MA GAW THE PAIN!");
-            break;
-        }
-        
-        NSLog(@"Writing a test file to UserFS...");
         const char *testFile = [NSString stringWithFormat:@"/var/mobile/test-%lu.txt", time(NULL)].UTF8String;
-        _assert(create_file(testFile, 0, 0644), @"Failed!", true);
-        _assert(clean_file(testFile), @"Failed!", true);
-        NSLog(@"Successfully wrote a test file to UserFS.");
+        _assert(create_file(testFile, 0, 0644), @"OWO This Is Bad!", true);
+        _assert(clean_file(testFile), @"OWO This Is VERY Bad!", true);
+        
         
         
         break;

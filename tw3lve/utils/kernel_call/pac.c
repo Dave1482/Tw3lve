@@ -12,7 +12,6 @@
 #include "mach_vm.h"
 #include "parameters.h"
 
-
 #if __arm64e__
 
 // ---- Global variables --------------------------------------------------------------------------

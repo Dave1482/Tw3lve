@@ -9,25 +9,6 @@
 #include "VarHolder.h"
 
 mach_port_t tfp0 = MACH_PORT_NULL;
-uint64_t kslide = -1;
 uint64_t kbase;
-uint64_t cr_label2;
-
-uint64_t newUcred;
-uint64_t owoproc;
-
-void setCR(uint64_t set)
-{
-    cr_label2 = set;
-}
-
-void setOwOProc(uint64_t set)
-{
-    owoproc = set;
-}
-
-void setUcred(uint64_t set)
-{
-    newUcred = set;
-}
-
+uint64_t current_task2;
+uint64_t ourprocowo;

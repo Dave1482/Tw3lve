@@ -19,26 +19,26 @@
 #define GB (1024uLL * MB)
 
 // Generate the name for an offset.
-#define OFFSET(base_, object_)        _##base_##__##object_##__offset_
+#define OFFSET(base_, object_)		_##base_##__##object_##__offset_
 
 // Generate the name for the size of an object.
-#define SIZE(object_)            _##object_##__size_
+#define SIZE(object_)			_##object_##__size_
 
 // Generate the name for the size of a zalloc block of objects.
-#define BLOCK_SIZE(object_)        _##object_##__block_size_
+#define BLOCK_SIZE(object_)		_##object_##__block_size_
 
 // Generate the name for the number of elements in a zalloc block.
-#define COUNT_PER_BLOCK(object_)    _##object_##__per_block_
+#define COUNT_PER_BLOCK(object_)	_##object_##__per_block_
 
 // Generate the name for the address of an object.
-#define ADDRESS(object_)        _##object_##__address_
+#define ADDRESS(object_)		_##object_##__address_
 
 // Generate the name for the static (unslid) address of an object.
-#define STATIC_ADDRESS(object_)        _##object_##__static_address_
+#define STATIC_ADDRESS(object_)		_##object_##__static_address_
 
 // A convenience macro for accessing a field of a structure.
-#define FIELD(object_, struct_, field_, type_)    \
-( *(type_ *) ( ((uint8_t *) object_) + OFFSET(struct_, field_) ) )
+#define FIELD(object_, struct_, field_, type_)	\
+	( *(type_ *) ( ((uint8_t *) object_) + OFFSET(struct_, field_) ) )
 
 // The static base address of the kernel.
 extern uint64_t STATIC_ADDRESS(kernel_base);
@@ -97,8 +97,6 @@ extern size_t COUNT_PER_BLOCK(ipc_voucher);
 // Parameters for struct proc.
 extern size_t OFFSET(proc, p_pid);
 extern size_t OFFSET(proc, p_ucred);
-extern size_t OFFSET(proc, task);
-extern size_t OFFSET(proc, p_list);
 
 // Parameters for struct sysctl_oid.
 extern size_t SIZE(sysctl_oid);
@@ -121,7 +119,7 @@ extern size_t OFFSET(task, bsd_info);
  * parameters_init
  *
  * Description:
- *     Initialize the parameters for the system.
+ * 	Initialize the parameters for the system.
  */
 bool parameters_init(void);
 

@@ -12,7 +12,7 @@
 #define _assert(test, message, fatal) do \
 if (!(test)) { \
 int saved_errno = errno; \
-LOG("__assert(%d:%s)@%s:%u[%s]", saved_errno, #test, __FILENAME__, __LINE__, __FUNCTION__); \
+LOGME("__assert(%d:%s)@%s:%u[%s]", saved_errno, #test, __FILENAME__, __LINE__, __FUNCTION__); \
 } \
 while (false)
 

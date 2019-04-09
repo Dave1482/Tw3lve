@@ -45,9 +45,4 @@ void stage2_kernel_call_deinit(void);
 uint32_t stage2_kernel_call_7v(uint64_t function,
 		size_t argument_count, const uint64_t arguments[]);
 
-uint64_t
-kernel_forge_pacda(uint64_t pointer, uint64_t context);
-
-
-
 #endif
